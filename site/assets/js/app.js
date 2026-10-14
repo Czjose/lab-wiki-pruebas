@@ -25,7 +25,8 @@
   };
   // Etiqueta de categoría: icono + texto en versalitas (clase .cat)
   const etiquetaCat = (c) => `<span class="cat cat-ico">${ICONOS[c] || ""}${esc(c)}</span>`;
-  // La 404 se sirve desde cualquier ruta (/a/b/c), por eso declara data-raiz="/" para usar enlaces absolutos
+  // Prefijo opcional para los enlaces que arma el JS. Vacío: todas las rutas son relativas
+  // (la 404, que se sirve desde cualquier ruta, lo resuelve con su propio <base>).
   const RAIZ = document.documentElement.dataset.raiz || "";
   const urlTermino = (id) => `${RAIZ}termino.html?id=${encodeURIComponent(id)}`;
   const CLAVE_ESTADO = "glosario-estado";   // filtro, búsqueda y scroll de la portada
