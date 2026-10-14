@@ -1,0 +1,6 @@
+capturas/
+*.zip
+.vscode/
+node_modules/
+Thumbs.db
+desktop.ini

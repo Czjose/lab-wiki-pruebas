@@ -1,0 +1,20 @@
+# Modo desarrollo: imagen oficial de Nginx + bind mount de ./site.
+# Editas un archivo en site/, refrescas el navegador y el cambio ya se ve.
+services:
+  wiki:
+    image: nginx:alpine
+    container_name: wiki-pruebas
+    ports:
+      - "8080:80"                                         # puerto de tu PC : puerto del contenedor
+    volumes:
+      - ./site:/usr/share/nginx/html:ro                   # el sitio vive en tu carpeta (solo lectura)
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro    # nuestra configuración (404 y caché)
+    restart: unless-stopped
+    healthcheck:
+      # Docker revisa cada 30 s que Nginx responde a la portada.
+      # 127.0.0.1 y no localhost: en Alpine, localhost resuelve primero a IPv6 (::1)
+      # y nginx.conf solo escucha en IPv4, así que el chequeo fallaría siempre.
+      test: ["CMD", "wget", "-q", "--spider", "http://127.0.0.1/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3

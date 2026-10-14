@@ -1,0 +1,797 @@
+/* ==========================================================================
+   Glosario de Pruebas de Software — hoja de estilos única
+   Concepto: "manual técnico editorial". Neutros cálidos (papel y tinta),
+   un solo acento verde petróleo y dos colores semánticos (pass / fail).
+   ========================================================================== */
+
+/* ---------- 1. Tokens de diseño ----------
+   Todo color sale de aquí: así el modo oscuro solo redefine variables
+   y ningún componente necesita reglas especiales para cada tema. */
+:root {
+  --paper: #F7F5F0;
+  --surface: #FFFFFF;
+  --ink: #1C1B19;
+  --ink-soft: #5C5A55;
+  --ink-mute: #6E6B64;   /* algo más oscuro que #8E8B84 para llegar a contraste AA sobre --paper */
+  --line: #E4E0D8;
+  --accent: #0F5C4D;
+  --accent-soft: #E3EFEB;
+  --pass: #2F7D4F;
+  --fail: #B4432F;
+  --code-bg: #1F211E;
+  --code-ink: #E9E6DE;
+
+  /* Footer en tinta oscura en ambos temas */
+  --footer-bg: #1C1B19;
+  --footer-ink: #D9D6CF;
+  --footer-mute: #A19E97;
+
+  --f-serif: "Fraunces", Georgia, "Times New Roman", serif;
+  --f-sans: "Source Sans 3", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, Consolas, monospace;
+
+  --radio: 10px;
+  --header-h: 60px;          /* 3 px de franja de acento + 57 px de barra */
+  --barra-h: 0px;            /* alto de la barra inferior móvil (solo cuando existe) */
+  --ancho: 1240px;
+  --sombra: 0 1px 2px rgba(28, 27, 25, .06);
+  color-scheme: light;
+}
+
+[data-theme="dark"] {
+  --paper: #121311;
+  --surface: #1A1C19;
+  --ink: #ECEAE4;
+  --ink-soft: #A9A69F;
+  --ink-mute: #8A877F;
+  --line: #2A2D29;
+  --accent: #5FBFA6;
+  --accent-soft: #16302A;
+  --pass: #6BC48F;
+  --fail: #E07A62;
+  --code-bg: #0C0D0B;
+  --code-ink: #E2DFD8;
+  --footer-bg: #0A0B09;
+  --footer-ink: #C9C6BF;
+  --footer-mute: #8F8C85;
+  --sombra: 0 1px 2px rgba(0, 0, 0, .3);
+  color-scheme: dark;
+}
+
+@media (min-width: 720px) { :root { --header-h: 68px; } }
+
+
+/* ---------- 2. Base ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  -webkit-text-size-adjust: 100%;
+  /* El header es fijo: este margen evita que los títulos queden tapados al saltar a un #ancla */
+  scroll-padding-top: calc(var(--header-h) + 20px);
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font: 400 17px/1.7 var(--f-sans);
+  -webkit-font-smoothing: antialiased;
+  /* Reserva espacio para la barra inferior móvil, así no tapa el contenido ni el footer */
+  padding-bottom: var(--barra-h);
+  overflow-wrap: break-word;
+}
+@media (max-width: 719px) { body { font-size: 16px; } }
+
+h1, h2, h3 {
+  font-family: var(--f-serif);
+  font-weight: 560;
+  line-height: 1.15;
+  letter-spacing: -.01em;
+  margin: 0 0 .5em;
+  font-optical-sizing: auto;
+}
+h1 { font-size: clamp(2.2rem, 5vw + .5rem, 3.4rem); }
+h2 { font-size: 1.75rem; }
+h3 { font-size: 1.25rem; }
+
+p { margin: 0 0 1em; }
+/* Sin palabras sueltas al final de párrafos ni títulos desbalanceados */
+p, li, dd, figcaption { text-wrap: pretty; }
+h1, h2, h3 { text-wrap: balance; }
+a { color: var(--accent); text-underline-offset: 3px; text-decoration-thickness: 1px; }
+a:hover { text-decoration-thickness: 2px; }
+code { font-family: var(--f-mono); font-size: .86em; background: color-mix(in srgb, var(--ink) 7%, transparent); color: var(--ink); padding: .1em .35em; border-radius: 4px; }
+pre code { background: none; padding: 0; color: inherit; border-radius: 0; }
+img, svg { max-width: 100%; }
+mark { background: var(--accent-soft); color: var(--accent); border-radius: 3px; padding: 0 1px; }
+button { font: inherit; color: inherit; }
+
+/* Anillo de foco visible solo con teclado, en el color de acento */
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+/* Enlace "saltar al contenido": invisible hasta que se navega con teclado */
+.salto { position: absolute; left: 16px; top: -48px; z-index: 70; background: var(--accent); color: var(--paper); padding: 8px 14px; border-radius: 8px; font-weight: 600; text-decoration: none; }
+.salto:focus { top: 8px; }
+.contenedor { max-width: var(--ancho); margin: 0 auto; padding: 0 16px; }
+@media (min-width: 640px) { .contenedor { padding: 0 32px; } }
+
+/* Etiquetas pequeñas en versalitas (categorías, eyebrows) */
+.eyebrow, .cat {
+  font: 600 .75rem/1.2 var(--f-sans);
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--ink-soft);
+}
+.num { font-family: var(--f-mono); font-size: .82rem; color: var(--ink-mute); }
+
+/* ---------- 3. Barra de progreso de lectura (2 px, justo bajo el header) ----------
+   No va en el borde superior porque ahí está la franja de acento del header. */
+.progreso {
+  position: fixed; left: 0; right: 0; top: var(--header-h); height: 2px; z-index: 60;
+  background: var(--accent);
+  transform-origin: 0 50%;
+  transform: scaleX(0);
+}
+
+/* ---------- 4. Header ----------
+   Fondo --surface (distinto del --paper de la página) y una franja de acento
+   de 3 px arriba como firma visual. Al hacer scroll, app.js agrega .con-scroll. */
+.header {
+  position: sticky; top: 0; z-index: 50;
+  height: var(--header-h);
+  background: var(--surface);
+  border-top: 3px solid var(--accent);
+  border-bottom: 1px solid var(--line);
+  transition: box-shadow .2s ease-out, background-color .2s ease-out;
+}
+.header.con-scroll {
+  background: color-mix(in srgb, var(--surface) 85%, transparent);
+  -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+  box-shadow: 0 1px 3px rgba(28, 27, 25, .08);
+}
+.header .contenedor { height: 100%; display: flex; align-items: center; gap: 8px; }
+
+.logo {
+  display: inline-flex; align-items: center; gap: 10px;
+  font: 600 22px/1 var(--f-serif);
+  color: var(--ink); text-decoration: none; margin-right: auto;
+  min-height: 44px; white-space: nowrap;
+}
+.logo-marca {
+  display: grid; place-items: center; width: 32px; height: 32px; border-radius: 8px;
+  background: var(--accent); color: var(--surface); flex: none;
+}
+.logo-marca svg { width: 22px; height: 22px; }
+.logo-punto { color: var(--accent); }
+/* Logo propio (config.js → logo): la imagen reemplaza al símbolo, sin el fondo de acento */
+.logo-marca.con-img { background: none; }
+.logo-marca img { width: 32px; height: 32px; object-fit: contain; display: block; }
+.footer .logo-marca { width: 28px; height: 28px; border-radius: 7px; }
+.footer .logo-marca svg { width: 18px; height: 18px; }
+.footer .logo-marca img { width: 28px; height: 28px; }
+.footer .autor { display: inline-flex; align-items: center; gap: 10px; }
+
+/* Enlaces: subrayado de 2 px que crece desde el centro (solo transform: barato de animar) */
+.nav-principal { display: flex; gap: 4px; }
+.nav-principal a {
+  position: relative; display: inline-flex; align-items: center; min-height: 44px;
+  color: var(--ink-soft); text-decoration: none; font-weight: 500; font-size: 1rem;
+  padding: 0 12px;
+}
+.nav-principal a::after {
+  content: ""; position: absolute; left: 12px; right: 12px; bottom: 8px; height: 2px;
+  background: var(--line); border-radius: 2px;
+  transform: scaleX(0); transition: transform .2s ease-out;
+}
+.nav-principal a:hover { color: var(--ink); }
+.nav-principal a:hover::after { transform: scaleX(1); }
+.nav-principal a[aria-current="page"] { color: var(--accent); }
+.nav-principal a[aria-current="page"]::after { background: var(--accent); transform: scaleX(1); }
+
+/* Divisor vertical entre navegación y acciones */
+.header-sep { width: 1px; height: 24px; background: var(--line); margin: 0 10px; }
+.acciones { display: flex; align-items: center; gap: 8px; }
+
+.btn-icono, .btn-buscar {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  height: 40px; min-width: 40px; padding: 0 10px;
+  border: 1px solid var(--line); border-radius: 8px;
+  background: var(--surface); color: var(--ink-soft); cursor: pointer;
+  text-decoration: none;
+}
+.btn-icono:hover, .btn-buscar:hover { color: var(--ink); border-color: var(--ink-mute); }
+.btn-icono svg, .btn-buscar svg { width: 18px; height: 18px; flex: none; }
+/* El botón de búsqueda imita un campo de texto */
+.btn-buscar { width: 220px; justify-content: flex-start; background: var(--paper); color: var(--ink-mute); font-size: .95rem; }
+.btn-buscar .texto { flex: 1; text-align: left; }
+kbd {
+  font: 500 .75rem/1 var(--f-mono);
+  border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 4px;
+  padding: 3px 6px; color: var(--ink-soft); background: var(--surface);
+}
+/* El botón de tema muestra la luna en claro y el sol en oscuro */
+.icono-sol { display: none; }
+[data-theme="dark"] .icono-sol { display: block; }
+[data-theme="dark"] .icono-luna { display: none; }
+.btn-menu { display: none; }
+.icono-cerrar { display: none; }
+.menu-abierto .btn-menu .icono-cerrar { display: block; }
+.menu-abierto .btn-menu .icono-hamburguesa { display: none; }
+
+/* Móvil: logo + búsqueda (solo icono) + tema + hamburguesa; los enlaces pasan a un panel */
+@media (max-width: 719px) {
+  .header-sep { display: none; }
+  .btn-menu { display: inline-flex; }
+  .btn-icono, .btn-buscar { width: 44px; height: 44px; min-width: 44px; padding: 0; justify-content: center; background: var(--surface); }
+  .btn-buscar .texto, .btn-buscar kbd { display: none; }
+  .logo { font-size: 20px; gap: 8px; }
+  .logo-marca { width: 30px; height: 30px; }
+  .nav-principal {
+    position: fixed; left: 0; right: 0; top: var(--header-h); z-index: 49;
+    flex-direction: column; gap: 0; padding: 8px 16px 16px;
+    background: var(--surface); border-bottom: 1px solid var(--line);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, .12);
+    display: none;
+  }
+  .menu-abierto .nav-principal { display: flex; }
+  .nav-principal a { font-size: 1.05rem; padding: 0 4px; border-bottom: 1px solid var(--line); }
+  .nav-principal a:last-child { border-bottom: 0; }
+  .nav-principal a::after { left: 4px; right: auto; width: 40px; bottom: 6px; }
+}
+
+/* ---------- Búsqueda en ventana (todas las páginas) ----------
+   En escritorio es un cuadro centrado; en móvil ocupa toda la pantalla. */
+.busqueda-modal {
+  position: fixed; inset: 0; z-index: 80;
+  background: rgba(20, 20, 18, .45);
+  display: flex; justify-content: center; align-items: flex-start;
+  padding: 10vh 16px 16px;
+}
+.busqueda-modal[hidden] { display: none; }
+.busqueda-caja {
+  width: min(640px, 100%); max-height: 75vh; display: flex; flex-direction: column;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 14px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, .2); overflow: hidden;
+}
+.busqueda-caja .buscador { max-width: none; border: 0; border-bottom: 1px solid var(--line); border-radius: 0; box-shadow: none; }
+.btn-cerrar {
+  flex: none; min-width: 44px; height: 44px; margin-right: 6px; padding: 0 10px;
+  border: 0; background: none; color: var(--ink-soft); font-weight: 600; cursor: pointer; border-radius: 8px;
+}
+.btn-cerrar:hover { color: var(--ink); }
+.resultados { list-style: none; margin: 0; padding: 8px; overflow-y: auto; }
+.resultados a {
+  display: flex; align-items: baseline; gap: 10px; min-height: 44px; padding: 10px 12px;
+  border-radius: 8px; color: var(--ink); text-decoration: none;
+}
+.resultados a:hover, .resultados a:focus-visible { background: var(--accent-soft); }
+.resultados .cat { margin-left: auto; white-space: nowrap; }
+.resultados .vacio { padding: 16px 12px; }
+@media (max-width: 719px) {
+  .busqueda-modal { padding: 0; background: var(--surface); }
+  .busqueda-caja { width: 100%; max-height: none; height: 100%; border: 0; border-radius: 0; box-shadow: none; }
+}
+
+/* ---------- 5. Portada: hero y buscador ---------- */
+/* Modo "color" (por defecto): franja suave de borde a borde; en oscuro, --accent-soft
+   ya es un verde muy oscuro, así que la mezcla se adapta sola. El contenido sigue
+   alineado al .contenedor; buscador y test runner van sobre --surface sólido. */
+.hero {
+  padding-top: 64px; padding-bottom: 40px; margin-bottom: 28px;
+  background: color-mix(in srgb, var(--accent-soft) 45%, var(--paper));
+  border-bottom: 1px solid var(--line);
+}
+/* Imagen de fondo opcional (config.js → heroFondo). app.js agrega .con-fondo solo si
+   la imagen cargó; la capa oscura (--hero-oscuro) hace legible el texto claro. */
+.hero.con-fondo {
+  background:
+    linear-gradient(rgba(0, 0, 0, var(--hero-oscuro, .55)), rgba(0, 0, 0, var(--hero-oscuro, .55))),
+    var(--hero-img) center / cover no-repeat;
+  border-bottom-color: transparent;
+}
+.hero.con-fondo h1 { color: #F7F5F0; }
+.hero.con-fondo .eyebrow, .hero.con-fondo .bajada, .hero.con-fondo .contador, .hero.con-fondo .contador strong { color: rgba(247, 245, 240, .88); }
+/* El buscador y el test runner quedan sobre superficie sólida, legibles sobre cualquier foto */
+.hero.con-fondo .buscador, .hero.con-fondo .runner { border-color: transparent; box-shadow: 0 1px 3px rgba(0, 0, 0, .25); }
+.hero-grid { display: grid; gap: 48px; align-items: center; }
+@media (min-width: 1024px) { .hero-grid { grid-template-columns: minmax(0, 1fr) 400px; } }
+.hero-grid > * { min-width: 0; }
+/* clamp(): el h1 escala con la pantalla; sin guiones ni cortes dentro de palabras */
+.hero h1 {
+  max-width: 16ch; margin: 14px 0 16px;
+  font-size: clamp(2rem, 6vw + .5rem, 3.4rem);
+  hyphens: none; overflow-wrap: normal; text-wrap: balance;
+}
+@media (max-width: 719px) { .hero { padding-top: 36px; padding-bottom: 28px; } }
+
+/* Tarjeta decorativa "test runner": salida simulada de JUnit (solo escritorio) */
+.runner {
+  font: 400 .84rem/1.9 var(--f-mono);
+  background: var(--surface); border: 1px solid var(--line); border-radius: 12px;
+  box-shadow: var(--sombra); overflow: hidden;
+}
+.runner-titulo {
+  display: flex; align-items: center; gap: 8px; padding: 10px 16px;
+  border-bottom: 1px solid var(--line); color: var(--ink-mute); font-size: .78rem;
+}
+.runner-titulo::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--line); box-shadow: 14px 0 0 var(--line), 28px 0 0 var(--line); margin-right: 32px; }
+.runner ol { list-style: none; margin: 0; padding: 14px 16px 16px; }
+.runner li { display: flex; gap: 10px; white-space: nowrap; }
+.runner .t { margin-left: auto; color: var(--ink-mute); }
+.runner .ok { color: var(--pass); }
+.runner .ko { color: var(--fail); }
+.runner .cmd, .runner .detalle { color: var(--ink-mute); }
+.runner .detalle { padding-left: 1.6em; font-size: .78rem; }
+.runner .resumen-tests { margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--line); color: var(--ink); font-weight: 500; }
+@media (max-width: 1023px) { .runner { display: none; } }
+.hero .bajada { color: var(--ink-soft); font-size: 1.15rem; max-width: 60ch; margin-bottom: 28px; }
+
+.buscador {
+  position: relative; max-width: 640px;
+  display: flex; align-items: center;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 12px;
+  box-shadow: var(--sombra);
+}
+.buscador:focus-within { border-color: var(--accent); }
+.buscador > svg { position: absolute; left: 16px; width: 20px; height: 20px; color: var(--ink-mute); pointer-events: none; }
+.buscador input {
+  flex: 1; min-width: 0; border: 0; background: none; outline: none;
+  font: inherit; font-size: 1.05rem; color: var(--ink);
+  padding: 15px 12px 15px 48px;
+}
+.buscador input::placeholder { color: var(--ink-mute); }
+.buscador input::-webkit-search-cancel-button { display: none; }
+.buscador kbd { margin-right: 14px; }
+.contador { margin-top: 14px; font-size: .92rem; color: var(--ink-mute); }
+.contador strong { color: var(--ink-soft); font-weight: 600; }
+
+/* ---------- 6. Chips de filtro ---------- */
+.filtros { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0 24px; padding: 0; list-style: none; }
+.chip {
+  display: inline-flex; align-items: center; white-space: nowrap;
+  border: 1px solid var(--line); background: var(--surface); color: var(--ink-soft);
+  font-weight: 600; font-size: .9rem; padding: 6px 14px; border-radius: 999px; cursor: pointer;
+}
+.chip:hover { color: var(--ink); border-color: var(--ink-mute); }
+/* Chip activo: tinta sobre superficie invertida. En oscuro se invierte solo, por los tokens. */
+.chip[aria-pressed="true"] { background: var(--ink); color: var(--surface); border-color: var(--ink); }
+.chip .n { font-family: var(--f-mono); font-size: .75rem; opacity: .75; margin-left: 4px; }
+/* Móvil: una sola fila con desplazamiento horizontal que se "engancha" a cada chip */
+@media (max-width: 719px) {
+  .filtros {
+    flex-wrap: nowrap; overflow-x: auto; scroll-snap-type: x mandatory;
+    margin-left: -16px; margin-right: -16px; padding: 2px 16px; scroll-padding: 0 16px;
+    scrollbar-width: none;
+  }
+  .filtros::-webkit-scrollbar { display: none; }
+  .filtros li { scroll-snap-align: start; flex: none; }
+  .chip { min-height: 44px; }
+}
+
+/* ---------- 7. Grid de tarjetas: 1 / 2 / 3 columnas ---------- */
+.grid { display: grid; gap: 16px; grid-template-columns: 1fr; margin: 0; padding: 0; list-style: none; }
+@media (min-width: 640px) { .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 1025px) { .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+
+.tarjeta {
+  position: relative; display: flex; flex-direction: column; height: 100%;
+  padding: 20px 22px 18px;
+  background: var(--surface); border: 1px solid var(--line); border-radius: var(--radio);
+  color: inherit; text-decoration: none;
+}
+.tarjeta:hover { border-color: var(--ink-mute); }
+.tarjeta-top { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+.tarjeta .num { font-weight: 500; }
+
+/* Categoría = icono de línea monocromo + etiqueta en versalitas (sin color propio) */
+.cat-ico { display: inline-flex; align-items: center; gap: 6px; color: var(--ink-soft); }
+.cat-ico svg { width: 16px; height: 16px; flex: none; stroke-width: 1.75; }
+
+/* Subtítulos editoriales al agrupar por categoría ("I. Fundamentos") */
+.grupo-cat + .grupo-cat { margin-top: 48px; }
+.grupo-titulo {
+  display: flex; align-items: baseline; gap: 12px;
+  font-size: 1.5rem; margin: 0 0 18px; padding-bottom: 10px; border-bottom: 1px solid var(--line);
+}
+.grupo-titulo .romano { color: var(--ink-mute); font-weight: 500; }
+.grupo-titulo .n { margin-left: auto; font: 400 .85rem var(--f-mono); color: var(--ink-mute); }
+.tarjeta h3 { margin: 0 0 8px; font-size: 1.3rem; }
+.tarjeta p { color: var(--ink-soft); font-size: .97rem; line-height: 1.55; margin: 0 0 14px; flex: 1; }
+.tarjeta .flecha { align-self: flex-end; width: 20px; height: 20px; color: var(--accent); }
+.tarjeta .sinonimo { font-size: .85rem; color: var(--ink-mute); margin: -8px 0 12px; flex: 0; }
+/* "Destacado": etiqueta neutra; solo la estrella va en acento */
+.badge {
+  margin-left: auto; display: inline-flex; align-items: center; gap: 4px;
+  font: 600 .7rem/1 var(--f-sans); letter-spacing: .06em; text-transform: uppercase;
+  color: var(--ink); border: 1px solid var(--line); border-radius: 999px; padding: 4px 8px;
+}
+.badge::before { content: "★"; color: var(--accent); font-size: .85rem; line-height: 1; }
+.vacio { padding: 40px 0; color: var(--ink-soft); }
+
+/* ---------- 8. Secciones de portada ---------- */
+.seccion { padding-top: 64px; padding-bottom: 64px; }
+.seccion-titulo { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 24px; }
+.seccion-titulo h2 { margin: 6px 0 0; }
+.seccion-titulo p { color: var(--ink-soft); margin: 0; max-width: 52ch; }
+
+/* Comparador interactivo caja negra vs caja blanca */
+.comparador {
+  display: grid; gap: 28px; align-items: center;
+  padding: 28px; background: var(--surface); border: 1px solid var(--line); border-radius: 14px;
+}
+@media (min-width: 900px) { .comparador { grid-template-columns: 1.05fr 1fr; padding: 40px; } }
+.comparador figure { margin: 0; }
+.comparador svg { display: block; width: 100%; height: auto; }
+.comparador h3 { font-size: 1.6rem; }
+.comparador .texto p { color: var(--ink-soft); }
+.comparador ul { padding-left: 1.1em; color: var(--ink-soft); }
+
+/* Interruptor accesible: es un <button role="switch"> */
+.switch {
+  display: inline-flex; align-items: center; gap: 12px; margin-bottom: 20px;
+  background: none; border: 0; padding: 0; cursor: pointer; font-weight: 600;
+}
+.switch-pista {
+  position: relative; width: 44px; height: 24px; border-radius: 999px;
+  background: var(--line); transition: background-color .2s ease-out;
+}
+.switch-pista::after {
+  content: ""; position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%;
+  background: var(--surface); box-shadow: var(--sombra); transition: transform .2s ease-out;
+}
+.switch[aria-checked="true"] .switch-pista { background: var(--accent); }
+.switch[aria-checked="true"] .switch-pista::after { transform: translateX(20px); }
+
+/* Capas del SVG del comparador: se muestra una u otra según el estado */
+.capa-blanca { opacity: 0; }
+.abierta .capa-blanca { opacity: 1; }
+.abierta .capa-negra { opacity: 0; }
+.capa-negra, .capa-blanca { transition: opacity .25s ease-out; }
+.abierta .tapa { transform: rotate(-14deg); }
+.tapa { transform-box: fill-box; transform-origin: 0 100%; transition: transform .25s ease-out; }
+
+/* Ficha extra: JUnit 5 */
+.ficha {
+  display: grid; gap: 28px;
+  padding: 28px; border: 1px solid var(--line); border-radius: 14px; background: var(--surface);
+}
+@media (min-width: 900px) { .ficha { grid-template-columns: 1fr 1.1fr; padding: 40px; } }
+.ficha h3 { margin-top: 1.2em; }
+.ficha h3:first-child { margin-top: 0; }
+.ficha ul { padding-left: 1.1em; }
+.ficha > *, .comparador > * { min-width: 0; } /* permite que el código haga scroll en vez de ensanchar la página */
+.ficha pre, .ficha .codigo { margin: 0; }
+
+/* ---------- 9. Footer ---------- */
+.footer { background: var(--footer-bg); color: var(--footer-ink); padding: 32px 0 40px; margin-top: 56px; font-size: .92rem; }
+.footer .contenedor { display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: space-between; }
+.footer p { margin: 0; }
+.footer .punto:not(.ok) { background: var(--footer-mute); }
+.estado-servidor { display: inline-flex; align-items: center; gap: 8px; }
+.punto { width: 8px; height: 8px; border-radius: 50%; background: var(--ink-mute); }
+.punto.ok { background: var(--pass); box-shadow: 0 0 0 3px color-mix(in srgb, var(--pass) 22%, transparent); }
+
+/* ---------- 10. Página de término: layout de 3 columnas ---------- */
+.doc > * { min-width: 0; } /* sin esto, un bloque de código ancho estira la columna y rompe los 375 px */
+.doc {
+  display: grid; gap: 48px;
+  grid-template-columns: 1fr;
+  padding-top: 32px; padding-bottom: 32px;
+}
+@media (min-width: 1000px) { .doc { grid-template-columns: 230px minmax(0, 1fr); } }
+@media (min-width: 1240px) { .doc { grid-template-columns: 230px minmax(0, 1fr) 210px; } }
+
+/* Barras laterales "pegadas" bajo el header, con scroll propio.
+   overscroll-behavior: contain evita que, al llegar al final del lateral, empiece a
+   desplazarse la página (scroll independiente). Barra de scroll fina y discreta. */
+.lateral {
+  position: sticky; top: calc(var(--header-h) + 24px);
+  max-height: calc(100vh - var(--header-h) - 48px); overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin; scrollbar-color: var(--line) transparent;
+  font-size: .93rem;
+}
+.lateral:hover { scrollbar-color: var(--ink-mute) transparent; }
+.lateral::-webkit-scrollbar { width: 6px; }
+.lateral::-webkit-scrollbar-track { background: transparent; }
+.lateral::-webkit-scrollbar-thumb { background: var(--line); border-radius: 3px; }
+.lateral:hover::-webkit-scrollbar-thumb { background: var(--ink-mute); }
+.lateral::-webkit-scrollbar-button { display: none; }
+@media (prefers-reduced-motion: no-preference) { .lateral { scroll-behavior: smooth; } }
+.lateral-titulo { margin: 0 0 10px; }
+.nav-terminos .grupo { margin-bottom: 18px; }
+.nav-terminos .grupo > p { margin: 0; }
+.nav-terminos ul, ul.toc { list-style: none; margin: 6px 0 0; padding: 0; }
+.nav-terminos a {
+  display: flex; gap: 8px; padding: 5px 10px; margin-left: -10px; border-radius: 6px;
+  color: var(--ink-soft); text-decoration: none; line-height: 1.35;
+}
+.nav-terminos a .num { font-size: .72rem; padding-top: 2px; }
+.nav-terminos a:hover { color: var(--ink); background: var(--accent-soft); }
+.nav-terminos a[aria-current="page"] { color: var(--accent); background: var(--accent-soft); font-weight: 600; }
+.filtro-nav {
+  width: 100%; margin-bottom: 16px; padding: 7px 10px; font: inherit; font-size: .9rem;
+  border: 1px solid var(--line); border-radius: 8px; background: var(--surface); color: var(--ink);
+}
+
+.toc a {
+  display: block; padding: 4px 0 4px 12px; border-left: 2px solid var(--line);
+  color: var(--ink-soft); text-decoration: none; line-height: 1.35;
+}
+.toc a:hover { color: var(--ink); }
+.toc a.activo { color: var(--accent); border-left-color: var(--accent); font-weight: 600; }
+.btn-copiar-enlace {
+  margin-top: 20px; display: inline-flex; align-items: center; gap: 8px;
+  border: 1px solid var(--line); background: var(--surface); border-radius: 8px;
+  padding: 7px 12px; cursor: pointer; font-size: .88rem; font-weight: 600; color: var(--ink-soft);
+}
+.btn-copiar-enlace:hover { color: var(--ink); border-color: var(--ink-mute); }
+.btn-copiar-enlace svg { width: 16px; height: 16px; }
+
+/* Drawer (< 1000 px): la navegación izquierda se desliza desde el borde, sobre un velo.
+   Se abre con el botón "Índice" de la barra inferior. */
+@media (max-width: 999px) {
+  .lateral-izq {
+    position: fixed; inset: 0 auto 0 0; top: 0;
+    width: min(320px, 86vw); max-height: none; z-index: 75;
+    padding: 20px 20px calc(20px + env(safe-area-inset-bottom)); background: var(--surface); border-right: 1px solid var(--line);
+    transform: translateX(-100%); visibility: hidden;
+    transition: transform .2s ease-out, visibility .2s;
+  }
+  .drawer-abierto .lateral-izq { transform: none; visibility: visible; }
+  .velo { position: fixed; inset: 0; z-index: 74; background: rgba(0, 0, 0, .4); }
+  .nav-terminos a { min-height: 44px; align-items: center; }
+  .nav-terminos a .num { padding-top: 0; }
+  .filtro-nav { min-height: 44px; font-size: 16px; }
+}
+@media (min-width: 1000px) { .velo { display: none !important; } }
+@media (max-width: 1239px) { .lateral-der { display: none; } }
+
+/* "En esta página" en pantallas sin columna derecha: un <details> arriba del contenido */
+.toc-movil {
+  margin: 0 0 20px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radio);
+}
+.toc-movil summary {
+  min-height: 44px; display: flex; align-items: center; padding: 0 16px; cursor: pointer;
+  font: 600 .8rem/1 var(--f-sans); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-soft);
+}
+.toc-movil ul { padding: 0 16px 12px !important; margin: 0; }
+.toc-movil .toc a { min-height: 40px; display: flex; align-items: center; }
+@media (min-width: 1240px) { .toc-movil { display: none; } }
+
+/* Grupo flotante abajo a la derecha (≥ 768 px): [← Volver al glosario] [↑].
+   A la derecha porque a la izquierda taparía la lista del lateral; en escritorio queda
+   en el espacio libre bajo "En esta página". app.js le pone .visible tras ~150 px de
+   scroll y ajusta "bottom" para que no se monte sobre el footer. */
+.flotantes {
+  position: fixed; right: 24px; bottom: 24px; z-index: 40;
+  display: flex; align-items: center; gap: 8px;
+  opacity: 0; transform: translateY(8px); pointer-events: none;
+  transition: opacity .2s ease-out, transform .2s ease-out;
+}
+.flotantes.visible { opacity: 1; transform: none; pointer-events: auto; }
+.btn-flotante {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  height: 44px; min-width: 44px; padding: 0 16px;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 999px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, .1);
+  color: var(--ink-soft); font-weight: 600; font-size: .92rem; text-decoration: none; cursor: pointer;
+}
+.btn-flotante:hover { color: var(--accent); border-color: var(--accent); }
+.btn-flotante svg { width: 18px; height: 18px; flex: none; }
+.btn-arriba { width: 44px; padding: 0; font-size: 1.1rem; }   /* circular */
+/* "Índice" solo hace falta donde el lateral es un drawer y no hay barra inferior (768–999 px) */
+.btn-indice { display: none; }
+@media (min-width: 768px) and (max-width: 999px) { .btn-indice { display: inline-flex; } }
+
+/* Móvil (< 768 px): barra inferior fija (Volver · Índice · Arriba). La crea app.js. */
+.barra-inferior { display: none; }
+@media (max-width: 767px) {
+  .flotantes { display: none; }
+  .con-barra { --barra-h: calc(60px + env(safe-area-inset-bottom)); }
+  .barra-inferior {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 48;
+    display: grid; grid-auto-flow: column; grid-auto-columns: 1fr;
+    padding: 6px 8px calc(6px + env(safe-area-inset-bottom));
+    background: var(--surface); border-top: 1px solid var(--line);
+    box-shadow: 0 -1px 3px rgba(0, 0, 0, .06);
+  }
+  .barra-inferior button {
+    min-height: 48px; border: 0; background: none; border-radius: 8px; cursor: pointer;
+    font-weight: 600; font-size: .92rem; color: var(--ink-soft);
+  }
+  .barra-inferior button:hover, .barra-inferior button:active { color: var(--accent); background: var(--accent-soft); }
+}
+
+/* ---------- 11. Artículo ---------- */
+.articulo { max-width: 72ch; min-width: 0; }
+.migas { font-size: .88rem; color: var(--ink-mute); margin-bottom: 18px; }
+.migas a { color: var(--ink-soft); text-decoration: none; }
+.migas a:hover { color: var(--accent); }
+.migas span[aria-hidden] { margin: 0 6px; }
+.meta { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-bottom: 10px; }
+.meta .num { font-weight: 500; }
+.meta .badge { margin-left: 0; }
+/* Encabezado del término: sin banda de color, solo jerarquía tipográfica */
+.cabecera { margin-bottom: 4px; }
+.cabecera h1 { margin: 0; font-size: clamp(2rem, 5vw + .5rem, 3.2rem); hyphens: none; overflow-wrap: normal; text-wrap: balance; }
+.resumen {
+  font-size: 1.2rem; line-height: 1.6; color: var(--ink-soft);
+  border-left: 3px solid var(--ink); padding: 2px 0 2px 18px; margin: 20px 0 8px;
+}
+.sinonimos { font-size: .9rem; color: var(--ink-mute); margin-bottom: 8px; }
+
+.articulo section { padding-top: 32px; }
+.articulo section > h2 { padding-top: 24px; border-top: 1px solid var(--line); }
+.articulo ul, .articulo ol { padding-left: 1.25em; }
+.articulo li { margin-bottom: .4em; }
+.articulo li::marker { color: var(--ink-mute); }
+
+/* Tablas */
+.tabla-wrap { overflow-x: auto; margin: 1.2em 0; border: 1px solid var(--line); border-radius: var(--radio); background: var(--surface); }
+table { width: 100%; border-collapse: collapse; font-size: .94rem; }
+th, td { text-align: left; vertical-align: top; padding: 10px 14px; border-bottom: 1px solid var(--line); }
+th { font-weight: 600; font-size: .8rem; text-transform: uppercase; letter-spacing: .05em; color: var(--ink-soft); background: var(--paper); }
+tr:last-child td { border-bottom: 0; }
+.estado { font-weight: 600; font-size: .85rem; white-space: nowrap; }
+.estado-pass { color: var(--pass); }
+.estado-fail { color: var(--fail); }
+
+/* Callouts: neutros (borde izquierdo de 2 px en tinta) + icono con máscara CSS (sin emojis).
+   El icono va en acento; "Ojo" y "En la práctica" usan fail / pass porque significan algo. */
+.callout {
+  margin: 1.4em 0; padding: 14px 18px;
+  background: var(--surface); border: 1px solid var(--line); border-left: 2px solid var(--ink);
+  border-radius: 0 var(--radio) var(--radio) 0;
+}
+.callout p:last-child { margin-bottom: 0; }
+.callout-titulo {
+  display: flex; align-items: center; gap: 8px; margin-bottom: .4em !important;
+  font-weight: 700; font-size: .8rem; letter-spacing: .06em; text-transform: uppercase; color: var(--ink);
+}
+.callout-titulo::before {
+  content: ""; width: 16px; height: 16px; flex: none; background: var(--accent);
+  -webkit-mask: var(--icono) center / contain no-repeat; mask: var(--icono) center / contain no-repeat;
+}
+.callout[data-tipo="definicion"] { --icono: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 19.5V5a2 2 0 0 1 2-2h14v16H6a2 2 0 0 0-2 2.5z'/%3E%3Cpath d='M8 7h8M8 11h6'/%3E%3C/svg%3E"); }
+.callout[data-tipo="ejemplo"] { --icono: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z'/%3E%3C/svg%3E"); }
+.callout[data-tipo="ojo"] { --icono: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 3 2 21h20L12 3z'/%3E%3Cpath d='M12 10v5M12 18h.01'/%3E%3C/svg%3E"); border-left-color: var(--fail); }
+.callout[data-tipo="ojo"] .callout-titulo { color: var(--fail); }
+.callout[data-tipo="ojo"] .callout-titulo::before, .callout[data-tipo="practica"] .callout-titulo::before { background: currentColor; }
+.callout[data-tipo="practica"] { --icono: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 12l5 5L20 6'/%3E%3C/svg%3E"); border-left-color: var(--pass); }
+.callout[data-tipo="practica"] .callout-titulo { color: var(--pass); }
+
+/* Bloques de código con botón copiar (el botón lo agrega app.js) */
+.codigo { position: relative; margin: 1.2em 0; }
+pre, code { font-variant-ligatures: none; } /* que ">=" se vea tal cual se escribe en Java */
+pre {
+  margin: 1.2em 0; overflow-x: auto;
+  background: var(--code-bg); color: var(--code-ink);
+  font: 400 .86rem/1.65 var(--f-mono);
+  padding: 18px 20px; border-radius: var(--radio);
+  tab-size: 4;
+}
+.codigo pre { margin: 0; padding-top: 34px; }
+.codigo .lenguaje { position: absolute; top: 9px; left: 20px; font: 500 .68rem/1 var(--f-mono); letter-spacing: .06em; text-transform: uppercase; color: #9a978f; }
+.btn-copiar {
+  position: absolute; top: 6px; right: 6px;
+  font: 500 .72rem/1 var(--f-mono); color: #c9c6be;
+  background: rgba(255, 255, 255, .06); border: 1px solid rgba(255, 255, 255, .12); border-radius: 6px;
+  padding: 6px 9px; cursor: pointer;
+}
+.btn-copiar:hover { color: #fff; background: rgba(255, 255, 255, .12); }
+.codigo, .tabla-wrap, .figura { max-width: 100%; }
+/* Táctil: el botón copiar llega a 44×44 y el código baja para no quedar debajo */
+@media (max-width: 719px) {
+  .btn-copiar { min-width: 44px; min-height: 44px; top: 2px; right: 2px; }
+  .codigo pre { padding-top: 50px; padding-left: 16px; padding-right: 16px; }
+  .codigo .lenguaje { top: 18px; left: 16px; }
+}
+
+/* Ventajas y desventajas */
+.pros-contras { display: grid; gap: 12px; margin-top: 8px; }
+@media (min-width: 640px) { .pros-contras { grid-template-columns: 1fr 1fr; } }
+.pros-contras > div { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radio); padding: 16px 18px; }
+.pros-contras h3 { font: 700 .8rem/1.2 var(--f-sans); letter-spacing: .06em; text-transform: uppercase; margin-bottom: 10px; }
+.pros-contras ul { list-style: none; padding: 0 !important; margin: 0; }
+.pros-contras li { display: flex; gap: 10px; font-size: .96rem; line-height: 1.5; margin-bottom: .6em; }
+.pros-contras li::before { font-weight: 700; flex: none; width: 1em; }
+.lista-pros h3, .lista-pros li::before { color: var(--pass); }
+.lista-contras h3, .lista-contras li::before { color: var(--fail); }
+.lista-pros li::before { content: "✓"; }
+.lista-contras li::before { content: "✕"; }
+
+/* Idea clave */
+.idea-clave p {
+  font: 500 1.35rem/1.45 var(--f-serif); color: var(--ink);
+  padding: 20px 24px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radio); margin: 0;
+}
+
+/* Diagramas SVG inline: trazos de 1.5 px y colores del sistema */
+.figura { margin: 1.6em 0; padding: 18px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radio); }
+.figura figcaption { font-size: .86rem; color: var(--ink-mute); margin-top: 10px; }
+.diagrama { display: block; width: 100%; height: auto; }
+/* En pantallas angostas el diagrama no se encoge hasta ser ilegible: la figura hace scroll */
+.figura { overflow-x: auto; }
+.figura .diagrama { min-width: 540px; }
+.dg-txt { fill: var(--ink); font: 500 14px var(--f-sans); }
+.dg-h { font-weight: 700; }
+.dg-chico { font-size: 13px; }
+.dg-mute { fill: var(--ink-mute); font: 500 12.5px var(--f-sans); }
+.dg-mono { fill: var(--ink); font: 500 13px var(--f-mono); }
+.dg-mono.dg-mute { fill: var(--ink-mute); }
+/* Todo en tonos de tinta; el acento solo en el elemento clave (.dg-clave), máximo uno por diagrama */
+.dg-acc-txt { fill: var(--ink); font-weight: 700; }
+.dg-inv { fill: var(--paper); }
+.dg-line { fill: none; stroke: var(--ink-soft); stroke-width: 1.5; }
+.dg-line.dg-acc { stroke: var(--ink); }
+.dg-head { fill: var(--ink-soft); }
+.dg-sep { stroke: var(--line); stroke-width: 1.5; stroke-dasharray: 4 4; }
+.dg-box { fill: var(--surface); stroke: var(--ink-soft); stroke-width: 1.5; }
+.dg-real { fill: var(--paper); stroke: var(--ink); }
+.dg-clave { fill: var(--accent-soft); stroke: var(--accent); }
+.dg-clave-txt { fill: var(--accent); }
+.dg-doble { stroke-dasharray: 5 4; }
+.dg-cerrada { fill: var(--ink); stroke: var(--ink); stroke-width: 1.5; }
+.dg-abierta { fill: none; stroke-dasharray: 0; }
+.dg-tapa { fill: none; stroke: var(--ink-soft); stroke-width: 1.5; }
+.dg-nodo { fill: var(--surface); stroke: var(--ink-soft); stroke-width: 1.5; }
+.dg-decision { fill: var(--paper); stroke: var(--ink); }
+
+/* Relacionados y anterior / siguiente */
+.relacionados { display: grid; gap: 12px; margin-top: 12px; }
+@media (min-width: 640px) { .relacionados { grid-template-columns: repeat(3, 1fr); } }
+.relacionados .tarjeta { padding: 14px 16px; }
+.relacionados .tarjeta h3 { font-size: 1.05rem; margin-bottom: 0; }
+.relacionados .tarjeta-top { margin-bottom: 6px; }
+
+.pager { display: grid; gap: 12px; margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--line); }
+@media (min-width: 640px) { .pager { grid-template-columns: 1fr 1fr; } }
+.pager a {
+  display: block; padding: 14px 18px; border: 1px solid var(--line); border-radius: var(--radio);
+  background: var(--surface); text-decoration: none; color: var(--ink);
+}
+.pager a:hover { border-color: var(--accent); }
+.pager small { display: block; color: var(--ink-mute); font-size: .82rem; margin-bottom: 2px; }
+.pager strong { font-family: var(--f-serif); font-weight: 560; font-size: 1.08rem; }
+.pager .sig { text-align: right; grid-column: 2; }
+@media (max-width: 639px) { .pager .sig { grid-column: auto; } }
+
+/* ---------- 12. Arquitectura y 404 ---------- */
+.pagina { padding-top: 56px; padding-bottom: 32px; }
+.pagina .articulo { max-width: 78ch; }
+.pagina h2 { margin-top: 1.8em; }
+.glosa { display: grid; gap: 12px; margin: 1.4em 0; }
+@media (min-width: 720px) { .glosa { grid-template-columns: 1fr 1fr; } }
+.glosa div { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radio); padding: 16px 18px; }
+.glosa dt { font-family: var(--f-serif); font-weight: 560; font-size: 1.12rem; margin-bottom: 4px; }
+.glosa dd { margin: 0; color: var(--ink-soft); font-size: .97rem; line-height: 1.6; }
+
+.error-404 { min-height: calc(100vh - var(--header-h) - 140px); display: grid; place-items: center; text-align: center; padding: 48px 16px; }
+.error-404 .codigo-error { font: 500 clamp(4rem, 14vw, 7.5rem)/1 var(--f-mono); color: var(--ink); letter-spacing: -.04em; margin-bottom: 8px; }
+.error-404 p { color: var(--ink-soft); max-width: 46ch; margin: 0 auto 1.4em; }
+.boton {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--accent); color: var(--paper); text-decoration: none; font-weight: 600;
+  padding: 10px 18px; border-radius: 8px;
+}
+.boton:hover { filter: brightness(1.08); }
+
+/* ---------- 13. Movimiento: solo si el usuario no pidió reducirlo ---------- */
+@media (prefers-reduced-motion: no-preference) {
+  html { scroll-behavior: smooth; }
+  .tarjeta { transition: border-color .15s ease-out, transform .2s ease-out; }
+  .tarjeta:hover { transform: translateY(-2px); }
+  .tarjeta .flecha { transition: transform .2s ease-out; }
+  .tarjeta:hover .flecha { transform: translateX(4px); }
+  /* Aparición escalonada de las tarjetas: el retraso lo pone app.js con --i */
+  .aparece { animation: subir .35s ease-out both; animation-delay: calc(var(--i, 0) * 35ms); }
+  @keyframes subir { from { opacity: 0; transform: translateY(8px); } }
+  /* Test runner: las líneas aparecen una por una, como si las pruebas se ejecutaran */
+  .runner li { animation: subir .3s ease-out both; animation-delay: calc(300ms + var(--l, 0) * 260ms); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .capa-negra, .capa-blanca, .tapa, .switch-pista, .switch-pista::after, .lateral-izq,
+  .header, .nav-principal a::after, .flotantes { transition: none !important; }
+}

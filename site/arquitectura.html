@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Arquitectura del sitio · Glosario·QA</title>
+  <meta name="description" content="Cómo se sirve esta wiki: imagen, contenedor, Nginx, puerto, bind mount, persistencia y healthcheck explicados con lenguaje simple.">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=JetBrains+Mono:wght@400;500&family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&display=swap">
+  <link rel="stylesheet" href="assets/css/styles.css">
+  <script>(function(){var t;try{t=localStorage.getItem("tema")}catch(e){}document.documentElement.dataset.theme=t||(matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light")})();</script>
+</head>
+<body>
+  <a class="salto" href="#contenido">Saltar al contenido</a>
+
+  <header class="header">
+    <div class="contenedor">
+      <a class="logo" href="index.html" aria-label="Glosario·QA, inicio">
+        <span class="logo-marca" aria-hidden="true"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M11 6H7v20h4M21 6h4v20h-4"/><path d="M11.5 16.5l3.5 3.5 6-8"/></svg></span>
+        Glosario<span class="logo-punto">·</span>QA
+      </a>
+      <nav class="nav-principal" id="menu-principal" aria-label="Principal">
+        <a href="index.html">Glosario</a>
+        <a href="arquitectura.html" aria-current="page">Arquitectura</a>
+      </nav>
+      <span class="header-sep" aria-hidden="true"></span>
+      <div class="acciones">
+        <a class="btn-buscar" href="index.html#buscar" data-abrir-busqueda aria-label="Buscar término (atajo: barra /)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+          <span class="texto">Buscar término…</span><kbd>/</kbd>
+        </a>
+        <button class="btn-icono" type="button" data-tema aria-label="Cambiar tema">
+          <svg class="icono-luna" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+          <svg class="icono-sol" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+        </button>
+        <button class="btn-icono btn-menu" type="button" aria-label="Abrir menú" aria-expanded="false" aria-controls="menu-principal">
+          <svg class="icono-hamburguesa" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+          <svg class="icono-cerrar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main id="contenido" class="contenedor pagina">
+    <article class="articulo">
+      <nav class="migas" aria-label="Ruta de navegación"><a href="index.html">Glosario</a><span aria-hidden="true">/</span><span aria-current="page">Arquitectura</span></nav>
+      <p class="eyebrow">Cómo está montado</p>
+      <h1>Arquitectura del sitio</h1>
+      <p class="resumen">Esta wiki son archivos HTML, CSS y JavaScript comunes. Lo interesante es cómo llegan a tu navegador: un servidor Nginx que corre dentro de un contenedor Docker y lee los archivos directamente de la carpeta del proyecto.</p>
+
+      <figure class="figura">
+        <svg class="diagrama" viewBox="0 0 760 250" role="img" aria-labelledby="arq-t arq-d">
+          <title id="arq-t">Recorrido de una petición</title>
+          <desc id="arq-d">El navegador pide localhost:8080; Docker conecta ese puerto con el puerto 80 del contenedor wiki-pruebas, donde Nginx responde leyendo la carpeta site del proyecto a través de un bind mount.</desc>
+          <defs>
+            <marker id="fl-arq" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="dg-head"/></marker>
+          </defs>
+          <!-- Navegador -->
+          <rect x="10" y="80" width="140" height="70" rx="8" class="dg-box"/>
+          <text x="80" y="111" class="dg-txt dg-h" text-anchor="middle">Navegador</text>
+          <text x="80" y="131" class="dg-mute" text-anchor="middle">en tu PC</text>
+          <!-- Petición al puerto publicado -->
+          <line x1="150" y1="115" x2="252" y2="115" class="dg-line dg-acc" marker-end="url(#fl-arq)"/>
+          <text x="201" y="100" class="dg-mono dg-chico" text-anchor="middle">localhost:8080</text>
+          <text x="201" y="138" class="dg-mute" text-anchor="middle">8080 → 80</text>
+          <!-- Contenedor -->
+          <rect x="256" y="34" width="250" height="172" rx="10" class="dg-box dg-doble"/>
+          <text x="272" y="58" class="dg-mono dg-chico">contenedor wiki-pruebas</text>
+          <rect x="296" y="82" width="170" height="66" rx="8" class="dg-box dg-clave"/>
+          <text x="381" y="112" class="dg-txt dg-h" text-anchor="middle">Nginx</text>
+          <text x="381" y="132" class="dg-mono dg-chico" text-anchor="middle">puerto 80</text>
+          <text x="381" y="186" class="dg-mute" text-anchor="middle">healthcheck: wget cada 30 s</text>
+          <!-- Bind mount -->
+          <line x1="606" y1="115" x2="470" y2="115" class="dg-line" marker-end="url(#fl-arq)"/>
+          <text x="538" y="100" class="dg-mute" text-anchor="middle">bind mount</text>
+          <text x="538" y="140" class="dg-mono dg-chico" text-anchor="middle">solo lectura</text>
+          <!-- Carpeta del proyecto -->
+          <path d="M610 82 h44 l10 10 h86 v58 h-140 z" class="dg-box"/>
+          <text x="680" y="120" class="dg-mono" text-anchor="middle">site/</text>
+          <text x="680" y="138" class="dg-mute" text-anchor="middle">en tu PC</text>
+          <text x="380" y="236" class="dg-mute" text-anchor="middle">./site (tu carpeta) se ve dentro del contenedor como /usr/share/nginx/html</text>
+        </svg>
+        <figcaption>Recuadro punteado: el contenedor. Los archivos viven fuera, en tu carpeta, y Nginx solo los lee.</figcaption>
+      </figure>
+
+      <h2>Las piezas, una por una</h2>
+      <dl class="glosa">
+        <div>
+          <dt>Imagen</dt>
+          <dd>El molde. Es un paquete de solo lectura con todo lo necesario para ejecutar algo; aquí, <code>nginx:alpine</code>. Se parece a una ISO: por sí sola no hace nada.</dd>
+        </div>
+        <div>
+          <dt>Contenedor</dt>
+          <dd>El molde funcionando. Es un proceso aislado creado a partir de la imagen, como una máquina virtual encendida, pero mucho más liviano. El nuestro se llama <code>wiki-pruebas</code>.</dd>
+        </div>
+        <div>
+          <dt>Nginx</dt>
+          <dd>El servidor web. Recibe las peticiones del navegador ("dame <code>index.html</code>") y devuelve el archivo correspondiente, o la página <a href="404.html">404</a> si no existe.</dd>
+        </div>
+        <div>
+          <dt>Puerto publicado <code>8080:80</code></dt>
+          <dd>Una puerta que conecta dos mundos: la puerta 8080 de tu PC queda enlazada con la puerta 80 del contenedor. Por eso entras por <code>http://localhost:8080</code> aunque Nginx escuche en el 80.</dd>
+        </div>
+        <div>
+          <dt>Bind mount <code>./site → /usr/share/nginx/html</code></dt>
+          <dd>El contenedor "ve" tu carpeta del proyecto como si fuera suya. Editas un archivo en VS Code, refrescas el navegador y el cambio ya está. Se monta en solo lectura (<code>:ro</code>) para que Nginx no pueda modificarla.</dd>
+        </div>
+        <div>
+          <dt>Persistencia</dt>
+          <dd>El contenido vive en tu carpeta, no dentro del contenedor. Si borras el contenedor con <code>docker compose down</code>, no se pierde nada: al levantarlo otra vez vuelve a leer los mismos archivos.</dd>
+        </div>
+        <div>
+          <dt>Healthcheck</dt>
+          <dd>Una revisión automática: cada 30 segundos Docker ejecuta <code>wget</code> dentro del contenedor contra la portada. Si responde, el estado es <code>healthy</code>; si falla tres veces seguidas, pasa a <code>unhealthy</code>.</dd>
+        </div>
+        <div>
+          <dt>Dockerfile (imagen propia)</dt>
+          <dd>La alternativa al bind mount: copia el sitio <em>dentro</em> de una imagen nueva. Es ideal para entregar o desplegar, pero cada cambio exige volver a construir la imagen.</dd>
+        </div>
+      </dl>
+
+      <h2>Levantarlo y detenerlo</h2>
+      <p>Desde la carpeta del proyecto, en PowerShell:</p>
+<pre><code class="lang-powershell">docker compose up -d      # crea y arranca el contenedor en segundo plano
+docker compose ps         # muestra el estado; tras ~30 s debe decir "healthy"
+docker compose down       # detiene y borra el contenedor (tus archivos siguen intactos)</code></pre>
+      <p>Y con la imagen propia, construida a partir del <code>Dockerfile</code>:</p>
+<pre><code class="lang-powershell">docker build -t wiki-pruebas:1.0 .
+docker run -d --name wiki-img -p 8081:80 wiki-pruebas:1.0</code></pre>
+
+      <h2>Pruebas al contenedor</h2>
+      <p>Revisar que el sitio funciona también es probar software, y cada comprobación encaja con un término del glosario:</p>
+      <div class="tabla-wrap">
+        <table>
+          <thead><tr><th>Prueba</th><th>Cómo se hace</th><th>Enfoque del glosario</th></tr></thead>
+          <tbody>
+            <tr>
+              <td>Abrir la página y verificar que responde</td>
+              <td><code>curl -I http://localhost:8080</code> debe devolver <code>200 OK</code>; una ruta inexistente, <code>404</code>.</td>
+              <td><a href="termino.html?id=caja-negra">Caja negra</a> / prueba de humo: solo miramos la respuesta.</td>
+            </tr>
+            <tr>
+              <td>Revisar el interior del contenedor</td>
+              <td><code>docker logs wiki-pruebas</code> y <code>docker inspect wiki-pruebas</code> muestran las peticiones, la configuración y el estado del healthcheck.</td>
+              <td>Más cercano a <a href="termino.html?id=caja-blanca">caja blanca</a>: miramos cómo funciona por dentro.</td>
+            </tr>
+            <tr>
+              <td>Comprobar que Nginx entrega los archivos del volumen</td>
+              <td>Editar un archivo de <code>site/</code>, refrescar y ver el cambio; verificar que CSS y JS llegan con <code>200</code>.</td>
+              <td><a href="termino.html?id=prueba-integracion">Integración</a>: Nginx, el bind mount y el navegador trabajando juntos.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout" data-tipo="practica">
+        <p class="callout-titulo">En la práctica</p>
+        <p>El indicador del pie de página dice "Servido con Nginx en Docker" cuando la página llega por <code>http://</code>. Si abres <code>index.html</code> con doble clic, dirá que está abierta como archivo local: el contenido es el mismo, pero sin servidor de por medio.</p>
+      </div>
+    </article>
+  </main>
+
+  <footer class="footer">
+    <div class="contenedor">
+      <p class="autor"><span class="logo-marca" aria-hidden="true"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M11 6H7v20h4M21 6h4v20h-4"/><path d="M11.5 16.5l3.5 3.5 6-8"/></svg></span>Jose Cruz · Ingeniería de Software Aplicada III · UTP, FISC</p>
+      <p class="estado-servidor" data-estado><span class="punto" aria-hidden="true"></span><span class="texto-estado">Servido con Nginx en Docker</span></p>
+    </div>
+  </footer>
+
+  <script src="assets/js/terminos.js"></script>
+  <script src="assets/js/config.js"></script>
+  <script src="assets/js/app.js"></script>
+</body>
+</html>
